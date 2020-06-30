@@ -3,9 +3,9 @@ marshmallow>=3.6.1
 flask>=1.1.2
 click>=7.1.2
 futu-api>=3.22.0
-Bootstrap-Flask>=1.4
 Flask-SQLAlchemy>=2.4.3
 flask-marshmallow>=0.13.0
 python-dotenv>=0.13.0
-
+marshmallow-sqlalchemy>=0.23.1
+bootstrap-flask>=1.4
 
