@@ -27,3 +27,7 @@ def tomorrow_in_str(d):
     d += datetime.timedelta(days=1)
     d = datetime_to_day_str(d)
     return d
+
+
+def truncate_by_day(dt: datetime.datetime) -> datetime.datetime:
+    return day_str_to_datetime(datetime_to_day_str(dt))

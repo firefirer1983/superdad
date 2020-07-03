@@ -1,14 +1,16 @@
 import logging
+
 import click
-from .model import db
-from .validator import ma
-from .exc import JsonErrorResponse
+from flask import jsonify
+from flask_bootstrap import Bootstrap
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
-from flask_bootstrap import Bootstrap
-from flask import jsonify
-from .kline import kline_bp
+
 from .dashboard import dashboard_bp
+from .exc import JsonErrorResponse
+from .kline import kline_bp
+from .model import db
+from .schema import ma
 
 
 def register_logging(flsk):

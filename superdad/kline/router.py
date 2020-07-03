@@ -27,8 +27,7 @@ def get_history(market, code):
     else:
         to_date, from_date = datetime.date.today(), first_day_of_year(
             datetime.date.today().year)
-    for month, data in gateway.get_kline_by_month("%s.%s" % (market, code),
-                                                  from_date=from_date,
-                                                  to_date=to_date):
+    for month, data in gateway.get_daily_history(market, code, from_date,
+                                                 to_date):
         print("%u: %r" % (month, data))
     return "hello"

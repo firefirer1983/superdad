@@ -3,6 +3,7 @@ from contextlib import contextmanager
 
 from futu import *
 
+from .base import ExGateway
 from ..utils.strs import datetime_to_day_str
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -18,20 +19,21 @@ def connection():
     conn.close()
 
 
-class FutuGateway:
+class FutuGateway(ExGateway):
     
     @staticmethod
-    def get_kline_by_month(code, from_date: datetime, to_date: datetime):
+    def get_kline_daily_history(code, start_date: datetime,
+                                end_date: datetime):
         histories = []
-        print("get kline:%s from %r to %r" % (code, from_date, to_date))
+        print("get kline:%s from %r to %r" % (code, start_date, end_date))
         page_req_key = None
         with connection() as c:
-            curr_month = from_date.month
+            curr_month = start_date.month
             while True:
                 ret, data, page_req_key = c.request_history_kline(
                     code,
-                    start=datetime_to_day_str(from_date),
-                    end=datetime_to_day_str(to_date),
+                    start=datetime_to_day_str(start_date),
+                    end=datetime_to_day_str(end_date),
                     max_count=MAX_DAY_PER_MONTH,
                     page_req_key=page_req_key
                 )
@@ -48,3 +50,26 @@ class FutuGateway:
                 
                 if not page_req_key:
                     break
+    
+    def get_daily_history(self, market, code, start_date: datetime,
+                          end_date: datetime):
+        code = "%s.%s" % (market, code)
+        return self.get_kline_daily_history(code, start_date, end_date)
+    
+    @staticmethod
+    def get_stock_basic_info(market, security_type):
+        with connection() as c:
+            ret, data = c.get_stock_basicinfo(market, security_type, None)
+            if ret == RET_OK:
+                print(data)
+                print(data['name'][0])  # 取第一条的股票名称
+                print(data['name'].values.tolist())  # 转为list
+                return data
+            else:
+                return []
+    
+    def get_sz_basic_info(self):
+        return self.get_stock_basic_info(Market.SH, SecurityType.STOCK)
+    
+    def get_sh_basic_info(self):
+        return self.get_stock_basic_info(Market.SZ, SecurityType.STOCK)

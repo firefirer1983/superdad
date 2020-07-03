@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template
 
+from ..gateway import gateway
+from ..model import Favourites
+
 dashboard_bp = Blueprint(
     "dashboard",
     __name__,
@@ -9,5 +12,13 @@ dashboard_bp = Blueprint(
 
 
 @dashboard_bp.route("/", methods=["GET"])
-def dashboard():
-    return render_template('dashboard.html', name="xy")
+@dashboard_bp.route("/favourites", methods=["GET"])
+def favourites():
+    ret = Favourites.list_stock()
+    return render_template('dashboard.html', favourte_list=ret)
+
+
+@dashboard_bp.route("/market", methods=["GET"])
+def markets():
+    sz = gateway.get_sz_basic_info()
+    sh = gateway.get_sh_basic_info()
