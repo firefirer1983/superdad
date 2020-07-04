@@ -1,26 +1,70 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        {% block head %}
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+	{% block head %}
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport"
+		      content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        {% block styles %}
-            <!-- Bootstrap CSS -->
-            {{ bootstrap.load_css() }}
-        {% endblock %}
+		{% block styles %}
+			<!-- Bootstrap CSS -->
+			{{ bootstrap.load_css() }}
+		{% endblock %}
 
-        <title>Your page title</title>
-        {% endblock %}
-    </head>
-    <body>
-        <!-- Your page content -->
-        {% block content %}{% endblock %}
+		{% block title %}
+		{% endblock %}
 
-        {% block scripts %}
-            <!-- Optional JavaScript -->
-            {{ bootstrap.load_js() }}
-        {% endblock %}
-    </body>
+	{% endblock %}
+</head>
+<body>
+{% block navbar %}
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="/">自选<span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/markets">深沪</a>
+				</li>
+			</ul>
+			<form class="form-inline my-2 my-lg-0">
+				<input class="form-control mr-sm-2" type="search"
+				       placeholder="Search" aria-label="Search">
+				<button class="btn btn-outline-success my-2 my-sm-0"
+				        type="submit">Search
+				</button>
+			</form>
+		</div>
+	</nav>
+{% endblock %}
+
+<!-- Your page content -->
+{% block content %}
+{% endblock %}
+
+{% block pager %}
+	<nav aria-label="Page navigation example">
+		<ul class="pagination justify-content-center">
+			<li class="page-item disabled">
+				<a class="page-link" href="#" tabindex="-1"
+				   aria-disabled="true">Previous</a>
+			</li>
+			<li class="page-item"><a class="page-link" href="#">1</a></li>
+			<li class="page-item"><a class="page-link" href="#">2</a></li>
+			<li class="page-item"><a class="page-link" href="#">3</a></li>
+			<li class="page-item">
+				<a class="page-link" href="#">Next</a>
+			</li>
+		</ul>
+	</nav>
+{% endblock %}
+
+{% block scripts %}
+	<!-- Optional JavaScript -->
+	{{ bootstrap.load_js() }}
+{% endblock %}
+</body>
 </html>

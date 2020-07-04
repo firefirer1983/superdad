@@ -1,12 +1,28 @@
 {% extends "base.html" %}
-{% block title %}This is an example page{% endblock %}
-
-{% block navbar %}
-<div class="navbar navbar-fixed-top">
-  <!-- ... -->
-</div>
-{% endblock %}
 
 {% block content %}
-  <h1>Hello, Bootstrap</h1>
+	<table class="table table-bordered">
+		<thead>
+		<tr>
+			<th scope="col" width="20px">#</th>
+			{% for i in range(16) %}
+				<th scope="col">{{ i }}</th>
+			{% endfor %}
+		</tr>
+
+
+		</thead>
+
+		<tbody>
+		{% for i in range(10) %}
+			<tr>
+				<th scope="row">{{ i }}</th>
+				{% for j in range(16) %}
+					<td>{{ j }}</td>
+				{% endfor %}
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+
 {% endblock %}

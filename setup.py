@@ -11,7 +11,7 @@ setuptools.setup(
     include_package_data=True,
     zip_safe=True,
     url="",
-    packages=setuptools.find_packages(exclude=['docs']),
+    packages=setuptools.find_packages(exclude=['docs', 'tests', 'protos']),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
@@ -21,6 +21,6 @@ setuptools.setup(
     install_requires=['requests', 'pika', 'sqlalchemy'],
     test_requires=['pytest'],
     entry_points={'console_scripts': [
-        'superdad = superdad.scripts.cli:cli',
+        'superdad = superdad.commands:cli',
     ]}
 )

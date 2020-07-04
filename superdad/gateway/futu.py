@@ -20,10 +20,10 @@ def connection():
 
 
 class FutuGateway(ExGateway):
-    
     @staticmethod
-    def get_kline_daily_history(code, start_date: datetime,
-                                end_date: datetime):
+    def get_kline_daily_history(
+        code, start_date: datetime, end_date: datetime
+    ):
         histories = []
         print("get kline:%s from %r to %r" % (code, start_date, end_date))
         page_req_key = None
@@ -35,7 +35,7 @@ class FutuGateway(ExGateway):
                     start=datetime_to_day_str(start_date),
                     end=datetime_to_day_str(end_date),
                     max_count=MAX_DAY_PER_MONTH,
-                    page_req_key=page_req_key
+                    page_req_key=page_req_key,
                 )
                 assert ret == RET_OK, "%r, %r" % (ret, data)
                 for i, date in enumerate(data["time_key"].values.tolist()):
@@ -46,30 +46,52 @@ class FutuGateway(ExGateway):
                         curr_month = date.month
                     else:
                         histories.append(
-                            [date, data["open"][i], data["close"][i]])
-                
+                            [date, data["open"][i], data["close"][i]]
+                        )
+
                 if not page_req_key:
                     break
-    
-    def get_daily_history(self, market, code, start_date: datetime,
-                          end_date: datetime):
+
+    def get_daily_history(
+        self, market, code, start_date: datetime, end_date: datetime
+    ):
         code = "%s.%s" % (market, code)
         return self.get_kline_daily_history(code, start_date, end_date)
-    
+
     @staticmethod
     def get_stock_basic_info(market, security_type):
         with connection() as c:
             ret, data = c.get_stock_basicinfo(market, security_type, None)
             if ret == RET_OK:
                 print(data)
-                print(data['name'][0])  # 取第一条的股票名称
-                print(data['name'].values.tolist())  # 转为list
+                print(data["name"][0])  # 取第一条的股票名称
+                print(data["name"].values.tolist())  # 转为list
                 return data
             else:
                 return []
-    
+
     def get_sz_basic_info(self):
         return self.get_stock_basic_info(Market.SH, SecurityType.STOCK)
-    
+
     def get_sh_basic_info(self):
         return self.get_stock_basic_info(Market.SZ, SecurityType.STOCK)
+
+    @staticmethod
+    def get_global_state():
+        with connection() as c:
+            gs = c.get_global_state()
+            return gs
+
+    def get_state(self):
+        return self.get_global_state()
+
+    @staticmethod
+    def get_kline_history_quota():
+        with connection() as c:
+            ret, quota = c.get_history_kl_quota(get_detail=True)
+            if ret == RET_OK:
+                print(quota)
+            return quota
+
+    def get_kline_quota(self):
+        return self.get_kline_history_quota()

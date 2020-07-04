@@ -18,7 +18,8 @@ def favourites():
     return render_template('dashboard.html', favourte_list=ret)
 
 
-@dashboard_bp.route("/market", methods=["GET"])
+@dashboard_bp.route("/markets", methods=["GET"])
 def markets():
     sz = gateway.get_sz_basic_info()
     sh = gateway.get_sh_basic_info()
+    return render_template("market.html")
