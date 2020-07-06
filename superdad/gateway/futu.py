@@ -95,3 +95,14 @@ class FutuGateway(ExGateway):
 
     def get_kline_quota(self):
         return self.get_kline_history_quota()
+
+    @staticmethod
+    def get_plate_stock(code):
+        with connection() as c:
+            ret, stocks = c.get_plate_stock(code)
+            if ret == RET_OK:
+                return stocks
+            return []
+
+    def list_stock_by_plate(self, code):
+        return self.get_plate_stock(code)

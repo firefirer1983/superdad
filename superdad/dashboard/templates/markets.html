@@ -3,31 +3,24 @@
 	<table class="table table-striped">
 		<thead>
 		<tr>
-			<th scope="col">#</th>
-			<th scope="col">First</th>
-			<th scope="col">Last</th>
-			<th scope="col">Handle</th>
+			<th>#</th>
+			<th scope="col">股票代码</th>
+			<th scope="col">股票名称</th>
+			<th scope="col">上市时间</th>
 		</tr>
 		</thead>
 		<tbody>
-		<tr>
-			<th scope="row">1</th>
-			<td>Mark</td>
-			<td>Otto</td>
-			<td>@mdo</td>
-		</tr>
-		<tr>
-			<th scope="row">2</th>
-			<td>Jacob</td>
-			<td>Thornton</td>
-			<td>@fat</td>
-		</tr>
-		<tr>
-			<th scope="row">3</th>
-			<td>Larry</td>
-			<td>the Bird</td>
-			<td>@twitter</td>
-		</tr>
+		{% for index, row in rows.iterrows() %}
+			<tr>
+				<th scope="row">{{ index }}</th>
+				<td>{{ row["code"] }}</td>
+				<td>{{ row["stock_name"] }}</td>
+				<td>{{ row["list_time"] }}</td>
+				<td><a href="/kline/code={{ code }}" class="btn btn-primary">收藏</a></td>
+				<td><a href="/kline/code={{ code }}">查看</a></td>
+
+			</tr>
+		{% endfor %}
 		</tbody>
 	</table>
 {% endblock %}
