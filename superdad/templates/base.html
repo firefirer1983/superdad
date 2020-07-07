@@ -8,7 +8,6 @@
 		      content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 		{% block styles %}
-			<!-- Bootstrap CSS -->
 			{{ bootstrap.load_css() }}
 		{% endblock %}
 
@@ -46,12 +45,13 @@
 {% endblock %}
 
 {% block pager %}
-
 {% endblock %}
 
 {% block scripts %}
-	<!-- Optional JavaScript -->
 	{{ bootstrap.load_js() }}
+<script src="/static/js/app.js" type="module"></script>
+
 {% endblock %}
+
 </body>
 </html>

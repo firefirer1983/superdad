@@ -1,6 +1,6 @@
 from flask_marshmallow import Marshmallow
 
-from .model import DailyHistory
+from .model import DayKline
 
 ma = Marshmallow()
 
@@ -11,7 +11,7 @@ class DateRangeSchema(ma.Schema):
 
 class DayHistorySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = DailyHistory
+        model = DayKline
         include_relationships = True
         load_instance = True
 

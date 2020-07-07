@@ -1,7 +1,10 @@
+import datetime
 import logging
+from urllib.parse import quote_plus
 
 import click
 from flask import jsonify
+from flask_apscheduler import APScheduler
 from flask_bootstrap import Bootstrap
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
@@ -11,6 +14,7 @@ from .exc import JsonErrorResponse
 from .kline import kline_bp
 from .model import db
 from .schema import ma
+from .tasks import kliner
 
 
 def register_logging(flsk):
@@ -43,6 +47,33 @@ def register_errors(flsk):
     flsk.register_error_handler(SQLAlchemyError, handle_db_error)
 
 
+scheduler = APScheduler()
+
+
+def next_tick(sec):
+    return datetime.datetime.now() + datetime.timedelta(seconds=sec)
+
+
+def register_tasks(flsk):
+    scheduler.init_app(flsk)
+    scheduler.add_job(
+        id="update-kline-tsk",
+        func=update_kline,
+        next_run_time=next_tick(3)
+    )
+    scheduler.start()
+
+
+def update_kline():
+    print('Update Kline executed')
+    kliner.update()
+    scheduler.add_job(
+        id="update-kline-tsk",
+        func=update_kline,
+        next_run_time=next_tick(3)
+    )
+
+
 def register_commands(flsk):
     @flsk.cli.command()
     @click.option("--drop", is_flag=True, help="Create after drop.")
@@ -57,6 +88,10 @@ def register_commands(flsk):
             click.echo("Drop tables.")
         db.create_all()
         click.echo("Initialized database.")
+
+
+def register_jinja_filters(fsk):
+    fsk.jinja_env.filters['quote_plus'] = lambda x: quote_plus(x)
 
 
 def handle_json_error(e):

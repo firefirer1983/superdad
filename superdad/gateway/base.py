@@ -4,7 +4,7 @@ import abc
 class ExGateway(abc.ABC):
     
     @abc.abstractmethod
-    def get_daily_history(self, market, code, start_date, end_date):
+    def get_daily_history(self, market_code, start_date, end_date):
         pass
     
     @abc.abstractmethod

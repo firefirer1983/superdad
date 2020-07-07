@@ -1,11 +1,13 @@
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import asc, func
 
 from .utils.sql_compat import SqliteNumeric
 from .utils.strs import datetime_to_day_str, day_str_to_datetime
 
 db = SQLAlchemy()
+
 Column, String, Text, DECIMAL, Model, DateTime, Integer, Boolean, Index = \
     db.Column, db.String, db.Text, SqliteNumeric, db.Model, db.DateTime, \
     db.Integer, db.Boolean, db.Index
@@ -24,10 +26,9 @@ class DefaultMixin:
     )
 
 
-class DailyHistory(DefaultMixin, Model):
+class DayKline(DefaultMixin, Model):
     time_key = Column(DateTime)
-    market = Column(String(8))
-    code = Column(String(16))
+    market_code = Column(String(32))
     open = Column(DECIMAL(precision="36,18"))
     close = Column(DECIMAL(precision="36,18"))
     high = Column(DECIMAL(precision="36,18"))
@@ -42,9 +43,27 @@ class DailyHistory(DefaultMixin, Model):
     @property
     def day(self):
         return day_str_to_datetime(datetime_to_day_str(self.date))
+    
+    @classmethod
+    def list_history(cls, reverse=True):
+        key = cls.time_key
+        if not reverse:
+            key = asc(cls.time_key)
+        
+        return cls.query.order_by(key).all() or []
+    
+    @classmethod
+    def latest(cls):
+        return db.session.query(func.max(cls.time_key)).one()
 
 
-class Favourites(DefaultMixin, Model):
+class DayAnalyze(DefaultMixin, Model):
+    time_key = Column(DateTime)
+    market_code = Column(String(32))
+    bottom = Column(Boolean, default=False)
+
+
+class Favourite(DefaultMixin, Model):
     market = Column(String(8))
     code = Column(String(16))
     
@@ -58,6 +77,13 @@ class Favourites(DefaultMixin, Model):
     @classmethod
     def list_stock(cls):
         return cls.query.all() or []
+    
+    @property
+    def market_code(self):
+        return ".".join([self.market, self.code])
 
 
-Index('market_code', Favourites.market, Favourites.code, unique=True)
+Index('market_code', Favourite.market, Favourite.code, unique=True)
+Index('day_kline_key', DayKline.market_code, DayKline.time_key, unique=True)
+Index('day_analyze_key', DayAnalyze.market_code, DayAnalyze.time_key,
+      unique=True)

@@ -1,6 +1,6 @@
 import datetime
 from contextlib import contextmanager
-
+from typing import List
 from futu import *
 
 from .base import ExGateway
@@ -48,16 +48,15 @@ class FutuGateway(ExGateway):
                         histories.append(
                             [date, data["open"][i], data["close"][i]]
                         )
-
+                
                 if not page_req_key:
                     break
-
+    
     def get_daily_history(
-        self, market, code, start_date: datetime, end_date: datetime
+        self, market_code, start_date: datetime, end_date: datetime
     ):
-        code = "%s.%s" % (market, code)
-        return self.get_kline_daily_history(code, start_date, end_date)
-
+        return self.get_kline_daily_history(market_code, start_date, end_date)
+    
     @staticmethod
     def get_stock_basic_info(market, security_type):
         with connection() as c:
@@ -69,22 +68,22 @@ class FutuGateway(ExGateway):
                 return data
             else:
                 return []
-
+    
     def get_sz_basic_info(self):
         return self.get_stock_basic_info(Market.SH, SecurityType.STOCK)
-
+    
     def get_sh_basic_info(self):
         return self.get_stock_basic_info(Market.SZ, SecurityType.STOCK)
-
+    
     @staticmethod
     def get_global_state():
         with connection() as c:
             gs = c.get_global_state()
             return gs
-
+    
     def get_state(self):
         return self.get_global_state()
-
+    
     @staticmethod
     def get_kline_history_quota():
         with connection() as c:
@@ -92,10 +91,10 @@ class FutuGateway(ExGateway):
             if ret == RET_OK:
                 print(quota)
             return quota
-
+    
     def get_kline_quota(self):
         return self.get_kline_history_quota()
-
+    
     @staticmethod
     def get_plate_stock(code):
         with connection() as c:
@@ -103,6 +102,19 @@ class FutuGateway(ExGateway):
             if ret == RET_OK:
                 return stocks
             return []
-
+    
     def list_stock_by_plate(self, code):
         return self.get_plate_stock(code)
+    
+    @staticmethod
+    def get_market_snap_shot(stocks: List[str]):
+        with connection() as c:
+            ret, data = c.get_market_snapshot(stocks)
+            if ret == RET_OK:
+                return data
+            return []
+    
+    def get_snap_shot(self, stocks: List[str]):
+        if not stocks:
+            return None
+        return self.get_market_snap_shot(stocks)

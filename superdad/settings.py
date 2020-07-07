@@ -9,6 +9,7 @@ class BaseConfig(object):
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = os.getenv("SQLALCHEMY_RECORD_QUERIES", True)
+    SCHEDULER_API_ENABLED = True
 
 
 class DevelopmentConfig(BaseConfig):

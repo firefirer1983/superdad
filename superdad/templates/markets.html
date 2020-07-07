@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th scope="col">股票代码</th>
+        <th scope="col">股票名称</th>
+        <th scope="col">上市时间</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for index, row in rows.iterrows() %}
+    <tr>
+        <th scope="row">{{ index }}</th>
+        <td>{{ row["code"] }}</td>
+        <td>{{ row["stock_name"] }}</td>
+        <td>{{ row["list_time"] }}</td>
+        <td>
+            {% if row["code"] in favs %}
+            <button class="btn btn-add-fav" disabled code={{row["code"]}}>
+                已收藏
+            </button>
+            {% else %}
+            <button class="btn btn-primary btn-add-fav" code={{row["code"]}}>
+                收藏
+            </button>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block pager %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1"
+               aria-disabled="true">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+        </li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script type="module" src="/static/js/fav.js"></script>
+{% endblock %}
