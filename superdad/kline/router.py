@@ -1,10 +1,8 @@
 import datetime
 
 from flask import Blueprint, request, render_template
-
-from ..gateway import gateway
 from ..utils.strs import DAY_FORMAT, str_to_datetime
-from ..model import DayKline
+from ..model import DayKline, DayAnalyze
 
 kline_bp = Blueprint("kline", __name__)
 

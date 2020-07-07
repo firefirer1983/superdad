@@ -53,7 +53,7 @@ class DayKline(DefaultMixin, Model):
         return cls.query.order_by(key).all() or []
     
     @classmethod
-    def latest(cls):
+    def last_time_key(cls):
         return db.session.query(func.max(cls.time_key)).one()
 
 

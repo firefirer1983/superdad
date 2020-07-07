@@ -57,20 +57,25 @@ def next_tick(sec):
 def register_tasks(flsk):
     scheduler.init_app(flsk)
     scheduler.add_job(
-        id="update-kline-tsk",
-        func=update_kline,
-        next_run_time=next_tick(3)
+        id="update-kline-tsk", func=update_kline, next_run_time=next_tick(3)
+    )
+    scheduler.add_job(
+        id="analyze-data-tsk", func=update_kline, next_run_time=next_tick(3)
     )
     scheduler.start()
 
 
 def update_kline():
-    print('Update Kline executed')
+    print("Update Kline executed")
     kliner.update()
     scheduler.add_job(
-        id="update-kline-tsk",
-        func=update_kline,
-        next_run_time=next_tick(3)
+        id="update-kline-tsk", func=update_kline, next_run_time=next_tick(3)
+    )
+
+
+def analyze_data():
+    scheduler.add_job(
+        id="update-kline-tsk", func=update_kline, next_run_time=next_tick(3)
     )
 
 
@@ -91,7 +96,7 @@ def register_commands(flsk):
 
 
 def register_jinja_filters(fsk):
-    fsk.jinja_env.filters['quote_plus'] = lambda x: quote_plus(x)
+    fsk.jinja_env.filters["quote_plus"] = lambda x: quote_plus(x)
 
 
 def handle_json_error(e):
