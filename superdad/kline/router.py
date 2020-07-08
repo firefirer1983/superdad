@@ -2,7 +2,7 @@ import datetime
 from ..gateway import gateway
 from flask import Blueprint, request, render_template
 from ..utils.strs import DAY_FORMAT, str_to_datetime
-from ..model import DayAnalyze
+from ..model import DayTrend
 
 kline_bp = Blueprint("kline", __name__)
 

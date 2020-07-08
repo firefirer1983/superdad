@@ -1,4 +1,4 @@
-FLASK_APP=superdad.web:app
+FLASK_APP=superdad:app
 FLASK_ENV=development
 FLASK_RUN_PORT=8008
 FLASK_RUN_HOST=localhost

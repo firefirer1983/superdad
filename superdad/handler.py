@@ -9,7 +9,7 @@ from flask_apscheduler import APScheduler
 from flask_bootstrap import Bootstrap
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
-from .tasks import kliner
+from .tasks import kliner, trender
 from .dashboard import dashboard_bp
 from .exc import JsonErrorResponse
 from .gateway import gateway
@@ -59,7 +59,8 @@ def next_tick(sec):
 def register_tasks(flsk):
     scheduler.init_app(flsk)
     cron_task(kliner.update, flsk, scheduler, "update-kline-task", 10)
-    cron_task(limit.refill, flsk, scheduler, "refill-bucket-task", 60)
+    # cron_task(limit.refill, flsk, scheduler, "refill-bucket-task", 60)
+    cron_task(trender.process, flsk, scheduler, "refill-bucket-task", 10)
     scheduler.start()
 
 
@@ -75,7 +76,7 @@ def cron_task(f, app, sched, task_id="", interval=60):
             ret = f()
         sched.add_job(id=task_id, func=_f, next_run_time=next_tick(interval))
         return ret
-    
+
     sched.add_job(id=task_id, func=_f, next_run_time=next_tick(interval))
     return _f
 
