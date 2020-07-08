@@ -17,7 +17,7 @@ class DevelopmentConfig(BaseConfig):
     LOG_LEVEL = getattr(logging, os.getenv("LOG_LEVEL", "DEBUG"))
     SQLALCHEMY_DATABASE_URI = "sqlite:///%s/dev.db3" % BASEDIR
     WTF_CSRF_ENABLED = False
-    EXPLAIN_TEMPLATE_LOADING = True
+    EXPLAIN_TEMPLATE_LOADING = False
 
 
 class TestingConfig(BaseConfig):
@@ -25,7 +25,7 @@ class TestingConfig(BaseConfig):
     LOG_LEVEL = getattr(logging, os.getenv("LOG_LEVEL", "DEBUG"))
     WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
-    EXPLAIN_TEMPLATE_LOADING = True
+    EXPLAIN_TEMPLATE_LOADING = False
 
 
 class ProductionConfig(BaseConfig):

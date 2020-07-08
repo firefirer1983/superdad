@@ -40,6 +40,10 @@ class DayKline(DefaultMixin, Model):
     change_rate = Column(DECIMAL(precision="36,18"))
     last_close = Column(DECIMAL(precision="36,18"))
     
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+    
     @property
     def day(self):
         return day_str_to_datetime(datetime_to_day_str(self.date))
@@ -53,8 +57,13 @@ class DayKline(DefaultMixin, Model):
         return cls.query.order_by(key).all() or []
     
     @classmethod
-    def last_time_key(cls):
-        return db.session.query(func.max(cls.time_key)).one()
+    def last_time_key(cls, market_code):
+        return db.session.query(func.max(cls.time_key)).filter_by(
+            market_code=market_code).scalar()
+    
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
 
 class DayAnalyze(DefaultMixin, Model):

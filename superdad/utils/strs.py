@@ -31,3 +31,8 @@ def tomorrow_in_str(d):
 
 def truncate_by_day(dt: datetime.datetime) -> datetime.datetime:
     return day_str_to_datetime(datetime_to_day_str(dt))
+
+
+def first_day_of_year(year):
+    return datetime.datetime.strptime("%u-01-01T00:00:00.000000" % year,
+                                      DATETIME_FORMAT)

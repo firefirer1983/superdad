@@ -1,5 +1,5 @@
 import os
-from superdad.web import app
+from superdad import app
 
 
 def main():

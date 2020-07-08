@@ -1,9 +1,12 @@
 import datetime
 from contextlib import contextmanager
+from datetime import datetime as DateTime
 from typing import List
+
 from futu import *
 
 from .base import ExGateway
+from ..limiter import limit
 from ..utils.strs import datetime_to_day_str
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -20,9 +23,19 @@ def connection():
 
 
 class FutuGateway(ExGateway):
-    @staticmethod
+    
+    @limit(count=1, period=60 * 1000)
+    def _request_history_kline(self, c, code, start: DateTime, end: DateTime,
+                               page_req_key):
+        return c.request_history_kline(
+            code,
+            start=datetime_to_day_str(start),
+            end=datetime_to_day_str(end),
+            page_req_key=page_req_key,
+        )
+    
     def get_kline_daily_history(
-        code, start_date: datetime, end_date: datetime
+        self, code, start_date: datetime, end_date: datetime
     ):
         histories = []
         print("get kline:%s from %r to %r" % (code, start_date, end_date))
@@ -30,24 +43,23 @@ class FutuGateway(ExGateway):
         with connection() as c:
             curr_month = start_date.month
             while True:
-                ret, data, page_req_key = c.request_history_kline(
+                ret, data, page_req_key = self._request_history_kline(
+                    c,
                     code,
-                    start=datetime_to_day_str(start_date),
-                    end=datetime_to_day_str(end_date),
-                    max_count=MAX_DAY_PER_MONTH,
-                    page_req_key=page_req_key,
+                    start=start_date,
+                    end=end_date,
+                    page_req_key=page_req_key
                 )
                 assert ret == RET_OK, "%r, %r" % (ret, data)
-                for i, date in enumerate(data["time_key"].values.tolist()):
-                    date = datetime.strptime(date, DATETIME_FORMAT)
+                for i, row in data.iterrows():
+                    date = datetime.strptime(row["time_key"], DATETIME_FORMAT)
                     if curr_month != date.month:
-                        yield curr_month, histories
+                        yield histories
                         histories.clear()
                         curr_month = date.month
                     else:
-                        histories.append(
-                            [date, data["open"][i], data["close"][i]]
-                        )
+                        row["time_key"] = date
+                        histories.append(row)
                 
                 if not page_req_key:
                     break

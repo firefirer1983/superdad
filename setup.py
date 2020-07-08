@@ -18,7 +18,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7',
-    install_requires=['requests', 'pika', 'sqlalchemy'],
+    install_requires=['requests', 'sqlalchemy'],
     test_requires=['pytest'],
     entry_points={'console_scripts': [
         'superdad = superdad.commands:cli',
