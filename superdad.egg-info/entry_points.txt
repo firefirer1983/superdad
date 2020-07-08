@@ -1,3 +1,0 @@
-[console_scripts]
-superdad = superdad.commands:cli
-

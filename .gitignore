@@ -6,7 +6,7 @@ venv/
 /dist
 /tmp
 /out-tsc
-cpg2.egg-info/
+*.egg-info/
 
 # dependencies
 /node_modules
