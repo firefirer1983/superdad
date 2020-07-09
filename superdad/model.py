@@ -1,3 +1,4 @@
+import pdb
 from datetime import datetime
 from typing import List, Tuple
 
@@ -71,10 +72,13 @@ class DayKline(DefaultMixin, Model):
         key = cls.time_key
         if not reverse:
             key = asc(cls.time_key)
-        cond = (cls.time_key >= begin) if begin else True
-        cond = and_(cond, cls.time_key < end) if end else True
-        cond = and_(cond, cls.market_code == market_code)
-        ret = cls.query.filter(cond).order_by(key).all()
+
+        criterions = [cls.market_code == market_code]
+        if begin:
+            criterions.append(cls.time_key >= begin)
+        if end:
+            criterions.append(cls.time_key < end)
+        ret = cls.query.filter(*criterions).order_by(key).all()
         return columns_of(cls), ret or []
     
     @classmethod
