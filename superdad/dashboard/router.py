@@ -15,7 +15,6 @@ def favourites():
     stocks = []
     if favs:
         stocks = gateway.get_snap_shot(favs)
-        stocks = [stock for i, stock in stocks.iterrows()]
     return render_template("dashboard.html",
                            titles=["股票代码", "更新时间", "最新价格"],
                            favs=stocks)

@@ -120,10 +120,10 @@ class FutuGateway(ExGateway):
         with connection() as c:
             ret, data = c.get_market_snapshot(stocks)
             if ret == RET_OK:
-                return data
+                return [row for _, row in data.iterrows()]
             return []
 
     def get_snap_shot(self, stocks: List[str]):
         if not stocks:
-            return None
+            return []
         return self.get_market_snap_shot(stocks)

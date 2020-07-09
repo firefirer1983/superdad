@@ -9,7 +9,7 @@ from flask_apscheduler import APScheduler
 from flask_bootstrap import Bootstrap
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
-from .tasks import kliner, trender
+
 from .dashboard import dashboard_bp
 from .exc import JsonErrorResponse
 from .gateway import gateway
@@ -17,6 +17,8 @@ from .kline import kline_bp
 from .limiter import limit
 from .model import db
 from .schema import ma
+from .tasks import kliner, trender
+from .utils.strs import str_to_datetime, datetime_to_day_str
 
 
 def register_logging(flsk):
@@ -76,7 +78,7 @@ def cron_task(f, app, sched, task_id="", interval=60):
             ret = f()
         sched.add_job(id=task_id, func=_f, next_run_time=next_tick(interval))
         return ret
-
+    
     sched.add_job(id=task_id, func=_f, next_run_time=next_tick(interval))
     return _f
 
@@ -99,6 +101,8 @@ def register_commands(flsk):
 
 def register_jinja_filters(fsk):
     fsk.jinja_env.filters["quote_plus"] = lambda x: quote_plus(x)
+    fsk.jinja_env.filters["to_day"] = lambda x: datetime_to_day_str(
+        str_to_datetime(x))
 
 
 def handle_json_error(e):

@@ -1,6 +1,5 @@
 import datetime
-import threading
-import os
+
 from ..gateway import gateway
 from ..model import DayKline, Favourite
 from ..utils.strs import first_day_of_year
@@ -9,11 +8,10 @@ from ..utils.strs import first_day_of_year
 class KLiner:
     def __init__(self):
         pass
-
+    
     @staticmethod
     def update():
-        print("pid:%r tid:%r" % (os.getpid(), threading.get_ident()))
-
+        
         for fav in Favourite.list_stock():
             end = datetime.datetime.today()
             # 如果数据库为空,则用今年第一天为开始

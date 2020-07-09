@@ -1,6 +1,7 @@
 import datetime
 
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
+DATETIME_FORMAT_S = "%Y-%m-%d %H:%M:%S"
 DAY_FORMAT = "%Y-%m-%d"
 
 
@@ -13,7 +14,10 @@ def datetime_to_day_str(dt: datetime.datetime) -> str:
 
 
 def str_to_datetime(st: str) -> datetime.datetime:
-    return datetime.datetime.strptime(st, DATETIME_FORMAT)
+    try:
+        return datetime.datetime.strptime(st, DATETIME_FORMAT)
+    except ValueError:
+        return datetime.datetime.strptime(st, DATETIME_FORMAT_S)
 
 
 def day_str_to_datetime(st: str) -> datetime.datetime:

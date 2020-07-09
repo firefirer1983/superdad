@@ -1,45 +1,53 @@
 {% extends "base.html" %}
-
 {% block content %}
-	<table class="table table-bordered">
-		<thead>
-		<tr>
-			<th scope="col" width="20px">#</th>
-			{% for i in range(16) %}
-				<th scope="col">{{ i }}</th>
-			{% endfor %}
-		</tr>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th scope="col" width="20px">#</th>
+        {% for title in titles %}
+        {% if title not in hidden %}
+        <th scope="col">{{ trans[title] }}</th>
+        {% endif %}
+        {% endfor %}
+    </tr>
+    </thead>
 
-
-		</thead>
-
-		<tbody>
-		{% for i in range(10) %}
-			<tr>
-				<th scope="row">{{ i }}</th>
-				{% for j in range(16) %}
-					<td>{{ j }}</td>
-				{% endfor %}
-			</tr>
-		{% endfor %}
-		</tbody>
-	</table>
+    <tbody>
+    {% for row in rows %}
+    <tr>
+        <th scope="row">{{ loop.index }}</th>
+        {% for key, val in row.items() %}
+        {% if key not in hidden %}
+        {% if key in ["change_rate"] %}
+        {% set val = val|float %}
+        <td class="{{ 'text-success' if val > 0 else 'text-danger' }}">{{'%0.5f'| format(val)}}</td>
+        {% elif key in ["time_key"] %}
+        <td>{{ val | to_day }}</td>
+        {% else %}
+        <td >{{ val }}</td>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
 
 {% endblock %}
 
 {% block pager %}
-	<nav aria-label="Page navigation example">
-		<ul class="pagination justify-content-center">
-			<li class="page-item disabled">
-				<a class="page-link" href="#" tabindex="-1"
-				   aria-disabled="true">Previous</a>
-			</li>
-			<li class="page-item"><a class="page-link" href="#">1</a></li>
-			<li class="page-item"><a class="page-link" href="#">2</a></li>
-			<li class="page-item"><a class="page-link" href="#">3</a></li>
-			<li class="page-item">
-				<a class="page-link" href="#">Next</a>
-			</li>
-		</ul>
-	</nav>
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1"
+               aria-disabled="true">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+        </li>
+    </ul>
+</nav>
 {% endblock %}

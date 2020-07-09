@@ -1,8 +1,9 @@
 import datetime
-from ..gateway import gateway
+
 from flask import Blueprint, request, render_template
+from ..i18n import kline_trans
+from ..model import DayKline
 from ..utils.strs import DAY_FORMAT, str_to_datetime
-from ..model import DayTrend
 
 kline_bp = Blueprint("kline", __name__)
 
@@ -21,7 +22,9 @@ def get_history(market_code):
     else:
         end, begin = datetime.date.today(), first_day_of_year(
             datetime.date.today().year)
-    print("enter!")
-    list(gateway.get_daily_history(market_code, begin, end))
-    print("exited!")
-    return render_template("kline.html", data=[])
+    titles, rows = DayKline.list_history(market_code=market_code, begin=begin,
+                                         end=end)
+    rows = [r.to_dict() for r in rows]
+    return render_template("kline.html", rows=rows, titles=titles,
+                           hidden=["id", "updated_at", "created_at"],
+                           trans=kline_trans)
