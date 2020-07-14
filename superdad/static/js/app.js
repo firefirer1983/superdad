@@ -15,3 +15,16 @@ export async function postData(url = '', data = {}) {
     });
     return response.json(); // parses JSON response into native JavaScript objects
 }
+
+$(function () {
+    var socket = io("ws://localhost:8008/");
+
+    //把接收的数据显示到界面
+    function showMessage(str, type) {
+        console.log(str)
+    }
+
+    socket.on('post-message', function (data) {
+        showMessage(data, 'message')
+    })
+})

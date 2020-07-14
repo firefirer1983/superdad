@@ -10,4 +10,4 @@ def on_connect():
 
 @ws.on('post-message')
 def handle_message(message):
-    print('received message: ' + message)
+    ws.emit("post-message", message)
