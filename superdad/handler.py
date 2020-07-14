@@ -17,7 +17,8 @@ from .kline import kline_bp
 from .limiter import limit
 from .model import db
 from .schema import ma
-from .tasks import kliner, trender
+from .socketio import ws
+from .tasks import pricer
 from .utils.strs import str_to_datetime, datetime_to_day_str
 
 
@@ -58,11 +59,16 @@ def next_tick(sec):
     return datetime.datetime.now() + datetime.timedelta(seconds=sec)
 
 
+def register_socketio(flsk):
+    return ws.init_app(flsk)
+
+
 def register_tasks(flsk):
     scheduler.init_app(flsk)
-    cron_task(kliner.update, flsk, scheduler, "update-kline-task", 10)
+    # cron_task(kliner.update, flsk, scheduler, "update-kline-task", 10)
     # cron_task(limit.refill, flsk, scheduler, "refill-bucket-task", 60)
-    cron_task(trender.process, flsk, scheduler, "refill-bucket-task", 10)
+    # cron_task(trender.process, flsk, scheduler, "refill-bucket-task", 10)
+    cron_task(pricer.run, flsk, scheduler, "socketio-task", 3)
     scheduler.start()
 
 
@@ -73,13 +79,15 @@ def register_token_bucket(flsk):
 
 def cron_task(f, app, sched, task_id="", interval=60):
     @wraps(f)
-    def _f():
+    def _f(*args, **kwargs):
         with app.app_context():
-            ret = f()
-        sched.add_job(id=task_id, func=_f, next_run_time=next_tick(interval))
+            ret = f(*args, **kwargs)
+        sched.add_job(id=task_id, func=_f,
+                      next_run_time=next_tick(interval))
         return ret
     
-    sched.add_job(id=task_id, func=_f, next_run_time=next_tick(interval))
+    sched.add_job(id=task_id, func=_f,
+                  next_run_time=next_tick(interval))
     return _f
 
 
