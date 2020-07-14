@@ -1,29 +1,30 @@
 <!doctype html>
 <html lang="en">
 <head>
-    {% block head %}
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	{% block head %}
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport"
+		      content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    {% block styles %}
-    {{ bootstrap.load_css() }}
-    {% endblock %}
+		{% block styles %}
+			{{ bootstrap.load_css() }}
+		{% endblock %}
 
-    {% block title %}
-    {% endblock %}
+		{% block title %}
+		{% endblock %}
 
-    {% endblock %}
+	{% endblock %}
 </head>
 <body>
 
 {% block navbar %}
 	<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist">
-			<a class="{% block nav_fav %}{% endblock %}" href="/">自选</a>
-			<a class="{% block nav_market %}{% endblock %}"
-			   href="/plates">市场</a>
+			{% set nav_focus_cls = "nav-item nav-link active" %}
+			{% set nav_unfocus_cls = "nav-item nav-link" %}
+			<a class="{{ nav_focus_cls if focus == 'fav' else nav_unfocus_cls }}" href="/">自选</a>
+			<a class="{{ nav_focus_cls if focus == 'markets'  else nav_unfocus_cls }}" href="/plates">市场</a>
 		</div>
 	</nav>
 {% endblock %}
@@ -38,7 +39,7 @@
 
 {% block scripts %}
 	{{ bootstrap.load_js() }}
-	{#<script src="/static/js/app.js" type="module"></script>#}
+	<script src={{ url_for("static", filename="js/socket.io.js") }}></script>
 	<script src={{ url_for("static", filename="js/app.js") }} type="module"></script>
 {% endblock %}
 
