@@ -19,12 +19,13 @@
 <body>
 
 {% block navbar %}
-<nav>
-    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <a class="{% block nav_fav %}{% endblock %}" href="/" >自选</a>
-        <a class="{% block nav_market %}{% endblock %}" href="/plates" >市场</a>
-    </div>
-</nav>
+	<nav>
+		<div class="nav nav-tabs" id="nav-tab" role="tablist">
+			<a class="{% block nav_fav %}{% endblock %}" href="/">自选</a>
+			<a class="{% block nav_market %}{% endblock %}"
+			   href="/plates">市场</a>
+		</div>
+	</nav>
 {% endblock %}
 
 
@@ -37,8 +38,8 @@
 
 {% block scripts %}
 	{{ bootstrap.load_js() }}
-<script src="/static/js/app.js" type="module"></script>
-
+	{#<script src="/static/js/app.js" type="module"></script>#}
+	<script src={{ url_for("static", filename="js/app.js") }} type="module"></script>
 {% endblock %}
 
 </body>
