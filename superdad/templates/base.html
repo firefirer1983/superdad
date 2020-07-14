@@ -21,10 +21,11 @@
 {% block navbar %}
 	<nav>
 		<div class="nav nav-tabs" id="nav-tab" role="tablist">
-			{% set nav_focus_cls = "nav-item nav-link active" %}
-			{% set nav_unfocus_cls = "nav-item nav-link" %}
-			<a class="{{ nav_focus_cls if focus == 'fav' else nav_unfocus_cls }}" href="/">自选</a>
-			<a class="{{ nav_focus_cls if focus == 'markets'  else nav_unfocus_cls }}" href="/plates">市场</a>
+			{% set nav_focus_cls, nav_unfocus_cls = "nav-item nav-link active", "nav-item nav-link" %}
+			<a class="{{ nav_focus_cls if focus == 'fav' else nav_unfocus_cls }}"
+			   href="/">自选</a>
+			<a class="{{ nav_focus_cls if focus == 'markets'  else nav_unfocus_cls }}"
+			   href="/plates">市场</a>
 		</div>
 	</nav>
 {% endblock %}
