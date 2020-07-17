@@ -1,13 +1,13 @@
 from flask_socketio import SocketIO
 
-ws = SocketIO()
+sio = SocketIO()
 
 
-@ws.on("connect")
+@sio.on("connect")
 def on_connect():
-    ws.emit("message", "connected")
+    sio.emit("message", "connected")
 
 
-@ws.on('post-message')
+@sio.on('post-message')
 def handle_message(message):
-    ws.emit("post-message", message)
+    sio.emit("post-message", "Hello from socketio server")

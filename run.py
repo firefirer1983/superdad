@@ -1,4 +1,6 @@
+#! /usr/bin/env python
 import os
+
 from superdad import app
 
 

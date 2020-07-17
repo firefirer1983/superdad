@@ -23,4 +23,4 @@ loglevel = "info"
 
 reload = True
 debug = False
-bind = "%s:%s" % ("0.0.0.0", 5001)
+bind = "%s:%u" % ("127.0.0.1", 8008)

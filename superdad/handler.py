@@ -1,6 +1,5 @@
-import datetime
 import logging
-from functools import wraps
+from multiprocessing import Process
 from urllib.parse import quote_plus
 
 import click
@@ -10,6 +9,7 @@ from flask_bootstrap import Bootstrap
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
 
+from .ctx import Context
 from .dashboard import dashboard_bp
 from .exc import JsonErrorResponse
 from .gateway import gateway
@@ -17,8 +17,8 @@ from .kline import kline_bp
 from .limiter import limit
 from .model import db
 from .schema import ma
-from .socketio import ws
-from .tasks import pricer
+from .socketio import sio
+from .tasks import Depthy
 from .utils.strs import str_to_datetime, datetime_to_day_str
 
 
@@ -30,6 +30,10 @@ def register_logging(flsk):
     console.setFormatter(formatter)
     flsk.logger.setLevel(flsk.config["LOG_LEVEL"])
     flsk.logger.addHandler(console)
+
+
+def register_shared_context(flsk):
+    flsk.ctx = Context()
 
 
 def register_blueprints(flsk):
@@ -52,43 +56,29 @@ def register_errors(flsk):
     flsk.register_error_handler(SQLAlchemyError, handle_db_error)
 
 
-scheduler = APScheduler()
-
-
-def next_tick(sec):
-    return datetime.datetime.now() + datetime.timedelta(seconds=sec)
-
-
 def register_socketio(flsk):
-    return ws.init_app(flsk)
+    sio.init_app(flsk)
 
 
 def register_tasks(flsk):
-    scheduler.init_app(flsk)
-    # cron_task(kliner.update, flsk, scheduler, "update-kline-task", 10)
-    # cron_task(limit.refill, flsk, scheduler, "refill-bucket-task", 60)
-    # cron_task(trender.process, flsk, scheduler, "refill-bucket-task", 10)
-    cron_task(pricer.run, flsk, scheduler, "socketio-task", 3)
-    scheduler.start()
+    flsk.apscheduler = APScheduler()
+    # cron_task(kliner.update, flsk, "update-kline-task", 10)
+    # cron_task(limit.refill, flsk, "refill-bucket-task", 60)
+    # cron_task(trender.process, flsk, "refill-bucket-task", 10)
+    # cron_task(trender.process, flsk, "refill-bucket-task", 10)
+    # cron_task(pricer.run, flsk, 3, "depth-update-task", pargs=[flsk.ctx],
+    #           executor="processpool")
+    # cron_task(depther.run, flsk, 3, "depth-read-task", pargs=[flsk.ctx],
+    #           executor="processpool")
+    p1 = Process(target=Depthy(flsk).run)
+    p1.start()
+    print("tasks all started!")
+    flsk.apscheduler.start()
 
 
 def register_token_bucket(flsk):
     gateway.init_app(flsk)
     limit.init_app(flsk)
-
-
-def cron_task(f, app, sched, task_id="", interval=60):
-    @wraps(f)
-    def _f(*args, **kwargs):
-        with app.app_context():
-            ret = f(*args, **kwargs)
-        sched.add_job(id=task_id, func=_f,
-                      next_run_time=next_tick(interval))
-        return ret
-    
-    sched.add_job(id=task_id, func=_f,
-                  next_run_time=next_tick(interval))
-    return _f
 
 
 def register_commands(flsk):
